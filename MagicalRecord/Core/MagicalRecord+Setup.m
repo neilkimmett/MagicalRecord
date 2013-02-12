@@ -23,14 +23,18 @@
     [self setupCoreDataStackWithAutoMigratingSqliteStoreNamed:[self defaultStoreName]];
 }
 
++(void) populateDefaultStoreCoordinator:(NSPersistentStoreCoordinator*)coordinator
+{
+    [NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:coordinator];	
+    [NSManagedObjectContext MR_initializeDefaultContextWithCoordinator:coordinator];
+}
+
 + (void) setupCoreDataStackWithStoreNamed:(NSString *)storeName
 {
     if ([NSPersistentStoreCoordinator MR_defaultStoreCoordinator] != nil) return;
     
 	NSPersistentStoreCoordinator *coordinator = [NSPersistentStoreCoordinator MR_coordinatorWithSqliteStoreNamed:storeName];
-    [NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:coordinator];
-	
-    [NSManagedObjectContext MR_initializeDefaultContextWithCoordinator:coordinator];
+    [self populateDefaultStoreCoordinator:coordinator];
 }
 
 + (void) setupCoreDataStackWithAutoMigratingSqliteStoreNamed:(NSString *)storeName
@@ -38,19 +42,32 @@
     if ([NSPersistentStoreCoordinator MR_defaultStoreCoordinator] != nil) return;
     
     NSPersistentStoreCoordinator *coordinator = [NSPersistentStoreCoordinator MR_coordinatorWithAutoMigratingSqliteStoreNamed:storeName];
-    [NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:coordinator];
-    
-    [NSManagedObjectContext MR_initializeDefaultContextWithCoordinator:coordinator];
+    [self populateDefaultStoreCoordinator:coordinator];
 }
+
++ (void) setupCoreDataStackWithStore:(NSURL *)storeURL
+{
+    if ([NSPersistentStoreCoordinator MR_defaultStoreCoordinator] != nil) return;
+    
+	NSPersistentStoreCoordinator *coordinator = [NSPersistentStoreCoordinator MR_coordinatorWithSqliteStore:storeURL];
+    [self populateDefaultStoreCoordinator:coordinator];
+}
+
++ (void) setupCoreDataStackWithAutoMigratingSqliteStore:(NSURL *)storeURL
+{
+    if ([NSPersistentStoreCoordinator MR_defaultStoreCoordinator] != nil) return;
+    
+    NSPersistentStoreCoordinator *coordinator = [NSPersistentStoreCoordinator MR_coordinatorWithAutoMigratingSqliteStore:storeURL];
+    [self populateDefaultStoreCoordinator:coordinator];
+}
+
 
 + (void) setupCoreDataStackWithInMemoryStore;
 {
     if ([NSPersistentStoreCoordinator MR_defaultStoreCoordinator] != nil) return;
     
 	NSPersistentStoreCoordinator *coordinator = [NSPersistentStoreCoordinator MR_coordinatorWithInMemoryStore];
-	[NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:coordinator];
-	
-    [NSManagedObjectContext MR_initializeDefaultContextWithCoordinator:coordinator];
+	[self populateDefaultStoreCoordinator:coordinator];
 }
 
 @end
