@@ -136,6 +136,9 @@ NSString * const kMagicalRecordPSCDidCompleteiCloudSetupNotification = @"kMagica
         // Adding the journalling mode recommended by apple
         [sqliteOptions setObject:@"WAL" forKey:@"journal_mode"];
     }
+    else {
+        [sqliteOptions setObject:@"DELETE" forKey:@"journal_mode"];
+    }
 
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
